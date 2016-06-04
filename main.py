@@ -9,7 +9,7 @@ def main():
     rank = comm.Get_rank()
 
     # define a url do arquivo a ser baixado
-    url = 'https://albireo2.sscdn.co/palcomp3/5/6/5/2/admusic-wasted-dailymusicru-3938c4.mp3'
+    url = 'https://alphard.sscdn.co/palcomp3/2/f/3/d/westhillband-one-more-night-in-heaven-9d2282.mp3'
 
     # processo coordenador
     if rank == 0:

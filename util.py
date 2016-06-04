@@ -5,6 +5,9 @@ import os
 import urllib2
 import shutil
 
+DIRETORIO_DO_DOWNLOAD = '/Users/edmilsonneto/Downloads/'
+DIRETORIO_TEMPORARIO = '/Users/edmilsonneto/Downloads/temp/'
+
 
 def obter_o_nome_do_arquivo(url):
 
@@ -57,7 +60,7 @@ def baixar_uma_parte_do_arquivo(url, indice, intervalo):
         requisicaoAberta = urllib2.urlopen(requisicao)
 
         # criar um arquivo temporario para salvar o intervalo baixado
-        with open('/Users/edmilsonneto/Downloads/temp/' + os.path.basename(url), "wb") as arquivo:
+        with open(DIRETORIO_TEMPORARIO + os.path.basename(url), "wb") as arquivo:
             # define o nome do arquivo
             nomeDoArquivo = arquivo.name
 
@@ -106,10 +109,10 @@ def juntar_arquivos_temporarios(url):
     nomeDoArquivo = obter_o_nome_do_arquivo(url)
 
     # cria um novo arquivo
-    arquivo = open('/Users/edmilsonneto/Downloads/' + nomeDoArquivo, 'wb')
+    arquivo = open(DIRETORIO_DO_DOWNLOAD + nomeDoArquivo, 'wb')
 
     # itera sobre cada arquivo temporario
-    for filename in iglob(os.path.join(os.getcwd(), '*.part')):
+    for filename in iglob(os.path.join(DIRETORIO_TEMPORARIO, '*.part')):
         # copia o conteudo de cada arquivo temporario para o arquivo final
         shutil.copyfileobj(open(filename, 'rb'), arquivo)
 
@@ -118,11 +121,10 @@ def juntar_arquivos_temporarios(url):
 
 
 def criar_diretorio_temporario_caso_nao_exista():
-    diretorioTemporario = '/Users/edmilsonneto/Downloads/temp/'
 
-    if not os.path.isdir(diretorioTemporario):
-        os.mkdir(diretorioTemporario)
+    if not os.path.isdir(DIRETORIO_TEMPORARIO):
+        os.mkdir(DIRETORIO_TEMPORARIO)
 
 
 def deletar_o_diretorio_temporario():
-    shutil.rmtree('/Users/edmilsonneto/Downloads/temp/')
+    shutil.rmtree(DIRETORIO_TEMPORARIO)
