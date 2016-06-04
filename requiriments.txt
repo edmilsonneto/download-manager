@@ -1,0 +1,4 @@
+mpi4py==2.0.0
+requests==2.10.0
+progressbar2
+blessings
