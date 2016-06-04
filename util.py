@@ -1,25 +1,47 @@
-from blessings import Terminal
+from glob import iglob
+from progressbar import ProgressBar
+from objects import Writer
 import os
 import urllib2
 import shutil
-from glob import iglob
-from progressbar import ProgressBar
 
 
-class Writer(object):
-    '''
-        Cria um objeto para imprimir a barra de progresso utilizando
-        o progressbar e o blessing
-    '''
+def obter_o_nome_do_arquivo(url):
 
-    def __init__(self, location):
-        self.location = location
+    nomeDoArquivo = url.split('/', len(url) - 1)
+    nomeDoArquivo = nomeDoArquivo[len(nomeDoArquivo) - 1]
 
-    def write(self, string):
-        term = Terminal()
+    return nomeDoArquivo
 
-        with term.location(*self.location):
-            print(string)
+
+def fabricar_intervalos(url):
+
+    # prepara a requisicao
+    requisicao = urllib2.Request(url)
+
+    # abre a requisicao
+    f = urllib2.urlopen(requisicao)
+
+    # obtem o tamanho total do arquivo
+    tamanhoTotalDoArquivo = f.headers['Content-Length']
+
+    # divide o tamanho do intervalo por 4 para definir o tamanho de cada intervalo
+    tamanhoDoIntervalo = int(tamanhoTotalDoArquivo) / 4
+
+    # cria varios intervalos contendo o valor inicial e final obs: rola uma magica matematica aqui kkkk
+    particao01 = {'inicio': 0, 'fim': tamanhoDoIntervalo}
+    particao02 = {'inicio': tamanhoDoIntervalo + 1, 'fim': tamanhoDoIntervalo * 2}
+    particao03 = {'inicio': (tamanhoDoIntervalo * 2) + 1, 'fim': tamanhoDoIntervalo * 3}
+    particao04 = {'inicio': (tamanhoDoIntervalo * 3) + 1, 'fim': tamanhoDoIntervalo * 4}
+
+    # cria uma colecao de intervalos e adiciona cada um dos intervalos criados
+    intervalos = []
+    intervalos.append(particao01)
+    intervalos.append(particao02)
+    intervalos.append(particao03)
+    intervalos.append(particao04)
+
+    return intervalos
 
 
 def baixar_uma_parte_do_arquivo(url, indice, intervalo):
@@ -78,48 +100,6 @@ def baixar_uma_parte_do_arquivo(url, indice, intervalo):
         return False
 
 
-def fabricar_intervalos(url):
-
-    # prepara a requisicao
-    requisicao = urllib2.Request(url)
-
-    # abre a requisicao
-    f = urllib2.urlopen(requisicao)
-
-    # obtem o tamanho total do arquivo
-    tamanhoTotalDoArquivo = f.headers['Content-Length']
-
-    # divide o tamanho do intervalo por 4 para definir o tamanho de cada intervalo
-    tamanhoDoIntervalo = int(tamanhoTotalDoArquivo) / 4
-
-    # cria varios intervalos contendo o valor inicial e final obs: rola uma magica matematica aqui kkkk
-    particao01 = {'inicio': 0, 'fim': tamanhoDoIntervalo}
-    particao02 = {'inicio': tamanhoDoIntervalo + 1, 'fim': tamanhoDoIntervalo * 2}
-    particao03 = {'inicio': (tamanhoDoIntervalo * 2) + 1, 'fim': tamanhoDoIntervalo * 3}
-    particao04 = {'inicio': (tamanhoDoIntervalo * 3) + 1, 'fim': tamanhoDoIntervalo * 4}
-
-    # cria uma colecao de intervalos e adiciona cada um dos intervalos criados
-    intervalos = []
-    intervalos.append(particao01)
-    intervalos.append(particao02)
-    intervalos.append(particao03)
-    intervalos.append(particao04)
-
-    return intervalos
-
-
-def obter_o_nome_do_arquivo(url):
-
-    nomeDoArquivo = url.split('/', len(url) - 1)
-    nomeDoArquivo = nomeDoArquivo[len(nomeDoArquivo) - 1]
-
-    return nomeDoArquivo
-
-
-def deletar_o_diretorio_temporario():
-    shutil.rmtree('/Users/edmilsonneto/Downloads/temp/')
-
-
 def juntar_arquivos_temporarios(url):
 
     # obtem o nome do arquivo
@@ -142,3 +122,7 @@ def criar_diretorio_temporario_caso_nao_exista():
 
     if not os.path.isdir(diretorioTemporario):
         os.mkdir(diretorioTemporario)
+
+
+def deletar_o_diretorio_temporario():
+    shutil.rmtree('/Users/edmilsonneto/Downloads/temp/')
