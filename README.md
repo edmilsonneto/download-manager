@@ -1,4 +1,4 @@
-# download-manager
+# Download Manager
 
 Gerenciador de downloads utilizando paralelismo.
 
